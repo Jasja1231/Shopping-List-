@@ -43,14 +43,22 @@ public class AddItemDialog extends Dialog{
      */
     public AddItemDialog(Context context) {
         super(context);
-        initButtons();
+       item = new Item();
     }
 
+    public void setItem(Item oldItem){
+        EditText itemTextView  = (EditText) this.findViewById(R.id.itemEditNameText);
+        itemTextView.setText(oldItem.getItemText());
+        this.item = oldItem;
+    }
 
-    public void initButtons(){
-        final EditText itemTextView  = (EditText) this.findViewById(R.id.editText);
+    private void initButtons(){
+        //TODO: delete this function
 
         Button saveButton = (Button)view.findViewById(R.id.button_save);
+        Button cancelButton = (Button)this.findViewById(R.id.button_cancel);
+        Button deleteButton = (Button)this.findViewById(R.id.button_delete);
+        Button takePictureButton = (Button) this.findViewById(R.id.button_add_image);
         saveButton.setOnClickListener(new Button.OnClickListener() {
             /**
              * Called when a view has been clicked.
@@ -62,44 +70,18 @@ public class AddItemDialog extends Dialog{
                 AddItemDialog.this.mainActivity.addItem(AddItemDialog.this.getConstructedItem());
             }
         });
-        Button cancelButton = (Button)this.findViewById(R.id.button_cancel);
-        Button deleteButton = (Button)this.findViewById(R.id.button_delete);
-        Button takePictureButton = (Button) this.findViewById(R.id.button_add_image);
+
     }
-    /**
-     * Called to have the fragment instantiate its user interface view.
-     * This is optional, and non-graphical fragments can return null (which
-     * is the default implementation).  This will be called between
-     * {@link #onCreate(Bundle)} and {@link #onActivityCreated(Bundle)}.
-     * <p>
-     * <p>If you return a View from here, you will later be called in
-     * {@link #onDestroyView} when the view is being released.
-     *
-     * @param inflater           The LayoutInflater object that can be used to inflate
-     *                           any views in the fragment,
-     * @param container          If non-null, this is the parent view that the fragment's
-     *                           UI should be attached to.  The fragment should not add the view itself,
-     *                           but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     *                           from a previous saved state as given here.
-     * @return Return the View for the fragment's UI, or null.
-     */
-    @Nullable
-   // @Override
-   /* public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.add_item_view, container, false);
-
-        initButtons();
-        return view;
-    }*/
-
 
     public void setMainActivity(MainActivity m){
             this.mainActivity = m;
     }
 
     public Item getConstructedItem(){
+        EditText itemTextView  = (EditText) this.findViewById(R.id.itemEditNameText);
+        this.item.setItemText(itemTextView.getText().toString());
 
+        //TODO: handle image
         return this.item;
     }
 

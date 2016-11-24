@@ -38,11 +38,13 @@ public class ListItemsReader {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
 
+            int index = 0;
             while ((line = br.readLine()) != null) {
                 Item it = new Item();
                 it.setItemText(line);
-
+                it.ID = index;
                 items.add(it);
+                index++;
             }
             br.close();
         }

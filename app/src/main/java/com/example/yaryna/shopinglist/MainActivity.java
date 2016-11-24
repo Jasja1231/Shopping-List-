@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,6 +54,44 @@ public class MainActivity extends AppCompatActivity {
         itemListAdapter = new ItemAdapter(this,items);
         listView.setAdapter(itemListAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Item itt = itemListAdapter.getItem(position);
+                final AddItemDialog dialog = new AddItemDialog(MainActivity.this);
+                dialog.setContentView(R.layout.add_item_view);
+                dialog.setTitle("Edit item");
+                dialog.setItem(itt);
+                Button cancelButton = (Button)dialog.findViewById(R.id.button_cancel);
+                cancelButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                Button saveButton = (Button)dialog.findViewById(R.id.button_save);
+                saveButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MainActivity.this.addItem(dialog.getConstructedItem());
+                        dialog.dismiss();
+                    }
+                });
+                Button deleteButton = (Button)dialog.findViewById(R.id.button_delete);
+                deleteButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MainActivity.this.deleteItem(dialog.getConstructedItem());
+                        dialog.dismiss();
+                    }
+                });
+
+
+                dialog.show();
+
+            }
+        });
 
 
         //Add floating button
@@ -64,14 +103,35 @@ public class MainActivity extends AppCompatActivity {
                 final AddItemDialog dialog = new AddItemDialog(MainActivity.this);
                 dialog.setContentView(R.layout.add_item_view);
                 dialog.setTitle("Add item");
-                dialog.setMainActivity(MainActivity.this);
-                dialog.show();
+                Button cancelButton = (Button)dialog.findViewById(R.id.button_cancel);
+                cancelButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
 
+                Button saveButton = (Button)dialog.findViewById(R.id.button_save);
+                saveButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MainActivity.this.addItem(dialog.getConstructedItem());
+                        dialog.dismiss();
+                    }
+                });
+                Button deleteButton = (Button)dialog.findViewById(R.id.button_delete);
+                deleteButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+
+                dialog.show();
             }
         });
     }
-
-
 
 
     @Override
@@ -103,8 +163,24 @@ public class MainActivity extends AppCompatActivity {
             items.add(it);
         }
         else{
-            items.add(it.ID,it);
+            items.set(it.ID,it);
         }
+        //Add items to list view
+        listView.invalidate();
+        listView = (ListView) findViewById(R.id.listViewItems);
+        itemListAdapter = new ItemAdapter(this,items);
+        listView.setAdapter(itemListAdapter);
+    }
 
+    public void deleteItem(Item it){
+      items.remove(it);
+        for(int i = 0 ; i < items.size();i++){
+            items.get(i).ID = i;
+        }
+        //Add items to list view
+        listView.invalidate();
+        listView = (ListView) findViewById(R.id.listViewItems);
+        itemListAdapter = new ItemAdapter(this,items);
+        listView.setAdapter(itemListAdapter);
     }
 }

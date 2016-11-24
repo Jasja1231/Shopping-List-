@@ -8,8 +8,9 @@ import android.media.Image;
 
 public class Item {
    private String itemText;
-   private  Image itemImage;
+    private  Image itemImage;
     public int  ID = -1;
+    public boolean done = false;
 
 
     public String getItemText() {
