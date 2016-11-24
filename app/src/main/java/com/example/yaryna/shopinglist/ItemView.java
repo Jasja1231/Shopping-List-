@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.FileWriter;
+
 
 /**
  * Created by Yaryna Konyushenko on 11/23/2016.
@@ -56,18 +58,20 @@ public class ItemView extends RelativeLayout {
     private void setupChildren() {
         mDescriptionTextView = (TextView) findViewById(R.id.item_textView);
         imageView = (ImageView) findViewById(R.id.item_imageView);
-        doneCheck = (CheckBox) findViewById(R.id.done_checkBox);
     }
 
     public void setItem(Item item) {
         mDescriptionTextView.setText(item.getItemText());
-        // TODO: set up image URL
-        if(null == item.getItemImage())
-            this.imageView.setVisibility(View.INVISIBLE);
+        if(null != item.getItemImage()){
+            imageView.setImageBitmap(item.getItemImage());
+            this.imageView.setVisibility(View.VISIBLE);
+
+            //save image to resoures
+            ListItemsWriter.writeImageToFile(item.ID + ".png",item.getItemImage());
+        }
 
         if(item.done == true)
-            this.doneCheck.setChecked(true);
-            
+            mDescriptionTextView.setText(item.getItemText()  + "--DONE");
     }
 
     public ImageView getImageView () {

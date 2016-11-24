@@ -1,6 +1,8 @@
 package com.example.yaryna.shopinglist;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 
 import java.io.BufferedReader;
@@ -45,6 +47,10 @@ public class ListItemsReader {
                 it.ID = index;
                 items.add(it);
                 index++;
+
+                Bitmap bmp = ListItemsReader.readBitmapFromFile(it.ID+".png");
+                if(null != bmp)
+                    it.setItemImage(bmp);
             }
             br.close();
         }
@@ -54,5 +60,19 @@ public class ListItemsReader {
         }
         
         return items;
+    }
+
+    public static Bitmap readBitmapFromFile(String imageName){
+        Bitmap bitmap = null;
+        try{
+            File sd = Environment.getExternalStorageDirectory();
+            File image = new File(sd, imageName);
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
+        }catch(Exception e){
+
+        }
+
+        return bitmap;
     }
 }

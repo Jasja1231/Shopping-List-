@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/enter_name"
-            android:layout_gravity="left|end"
+            android:layout_gravity="end"
             android:layout_column="0"
             android:layout_row="1"
             android:id="@+id/textView"
@@ -34,13 +34,12 @@
             />
 
         <EditText
-            android:layout_width="652dp"
-            android:layout_height="74dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/itemEditNameText"
-            android:hint="Enter name of the item to be added..."
-            android:layout_gravity="center_horizontal" />
+            android:hint="Enter name of the item to be added..." />
 
     </GridLayout>
 
@@ -62,6 +61,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/button_cancel" />
 
-
+    <Button
+        android:text="Done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_done" />
 
 </LinearLayout>

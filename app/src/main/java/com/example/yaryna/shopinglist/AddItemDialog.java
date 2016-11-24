@@ -3,6 +3,8 @@ package com.example.yaryna.shopinglist;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +19,7 @@ import android.widget.LinearLayout;
  * Created by Yaryna Konyushenko on 11/24/2016.
  */
 
+
 public class AddItemDialog extends Dialog{
     /**
      * UI elements
@@ -30,7 +33,7 @@ public class AddItemDialog extends Dialog{
      * Data
      */
     private int ID;
-    private Item item;
+    public Item item;
 
     /**
      * Creates a dialog window that uses the default dialog theme.
@@ -85,4 +88,8 @@ public class AddItemDialog extends Dialog{
         return this.item;
     }
 
+
+    public void acceptImage(Bitmap lastLoaded) {
+        this.item.setItemImage(lastLoaded);
+    }
 }

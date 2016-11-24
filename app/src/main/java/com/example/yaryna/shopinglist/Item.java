@@ -1,5 +1,6 @@
 package com.example.yaryna.shopinglist;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
 /**
@@ -8,7 +9,7 @@ import android.media.Image;
 
 public class Item {
    private String itemText;
-    private  Image itemImage;
+    private Bitmap itemImage;
     public int  ID = -1;
     public boolean done = false;
 
@@ -21,11 +22,11 @@ public class Item {
         this.itemText = itemText;
     }
 
-    public Image getItemImage() {
+    public Bitmap getItemImage() {
         return itemImage;
     }
 
-    public void setItemImage(Image itemImage) {
+    public void setItemImage(Bitmap itemImage) {
         this.itemImage = itemImage;
     }
 }

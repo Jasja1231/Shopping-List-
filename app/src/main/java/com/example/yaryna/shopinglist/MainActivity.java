@@ -1,8 +1,11 @@
 package com.example.yaryna.shopinglist;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     private ItemAdapter itemListAdapter;
+    private Bitmap lastLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
         //Read values from the  file to display
         items = ListItemsReader.readFile(DATA_FILE);
 
@@ -50,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
 
         //Add items to list view
         listView = (ListView) findViewById(R.id.listViewItems);
-
         itemListAdapter = new ItemAdapter(this,items);
         listView.setAdapter(itemListAdapter);
 
+        //Handle clicking on on list item clicked
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
                 saveButton.setOnClickListener(new Button.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                         if(lastLoaded!=null){
+                            dialog.acceptImage(lastLoaded);
+                            lastLoaded = null;
+                        }
                         MainActivity.this.addItem(dialog.getConstructedItem());
                         dialog.dismiss();
                     }
@@ -87,7 +98,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-
+                Button photoButton = (Button)dialog.findViewById(R.id.button_add_image);
+                photoButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            MainActivity.this.startActivityForResult(takePictureIntent, 1);
+                        }
+                    }
+                });
+                Button doneButton = (Button)dialog.findViewById(R.id.button_done);
+                doneButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.item.done = true;
+                        dialog.dismiss();
+                    }
+                });
                 dialog.show();
 
             }
@@ -115,6 +143,10 @@ public class MainActivity extends AppCompatActivity {
                 saveButton.setOnClickListener(new Button.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if(lastLoaded!=null){
+                            dialog.acceptImage(lastLoaded);
+                            lastLoaded = null;
+                        }
                         MainActivity.this.addItem(dialog.getConstructedItem());
                         dialog.dismiss();
                     }
@@ -127,12 +159,39 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                Button photoButton = (Button)dialog.findViewById(R.id.button_add_image);
+                photoButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            MainActivity.this.startActivityForResult(takePictureIntent, 1);
+                        }
+                    }
+                });
+
+                Button doneButton = (Button)dialog.findViewById(R.id.button_done);
+                doneButton.setOnClickListener(new Button.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.item.done = true;
+                       dialog.dismiss();
+                    }
+                });
 
                 dialog.show();
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            lastLoaded = imageBitmap;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
             return true;
         }
 
@@ -170,17 +230,42 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listViewItems);
         itemListAdapter = new ItemAdapter(this,items);
         listView.setAdapter(itemListAdapter);
+
+        //override file content
+        String content = "";
+        for(int i = 0 ; i < items.size() ;i++){
+            content += items.get(i).getItemText();
+            content += "\n";
+        }
+        ListItemsWriter.writeToFile(content);
     }
 
+    /**
+     * Deletes item from the list and uodates list.
+     * @param it
+     */
     public void deleteItem(Item it){
-      items.remove(it);
+        items.remove(it);
+        if(it.getItemImage()!=null)
+            ListItemsWriter.deleteImage(it.ID+".png");
+
         for(int i = 0 ; i < items.size();i++){
+            ListItemsWriter.renameImage(items.get(i).ID+".png",i+".png");
             items.get(i).ID = i;
         }
+
         //Add items to list view
         listView.invalidate();
         listView = (ListView) findViewById(R.id.listViewItems);
         itemListAdapter = new ItemAdapter(this,items);
         listView.setAdapter(itemListAdapter);
+
+
+        String content = "";
+        for(int i = 0 ; i < items.size() ;i++){
+            content += items.get(i).getItemText();
+            content += "\n";
+        }
+        ListItemsWriter.writeToFile(content);
     }
 }
