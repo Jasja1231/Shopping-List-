@@ -20,8 +20,8 @@ public class ListItemsReader {
      * @param fileName the name of the file to be loaded from the memory
      * @return null - if anu error occured. Fie may not exist.
      */
-    public static ArrayList<String> readFile(String fileName ){
-        ArrayList<String> listOfItems = new ArrayList<String>();
+    public static  ArrayList<Item>  readFile(String fileName ){
+        ArrayList<Item> items = new ArrayList<Item>();
 
         //find the directory for the SDcard
         File dir = Environment.getExternalStorageDirectory();
@@ -32,14 +32,17 @@ public class ListItemsReader {
 
             if(!file.exists()){
                 file.createNewFile();
-                return listOfItems;
+                return items;
             }
 
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
 
             while ((line = br.readLine()) != null) {
-                listOfItems.add(line);
+                Item it = new Item();
+                it.setItemText(line);
+
+                items.add(it);
             }
             br.close();
         }
@@ -48,6 +51,6 @@ public class ListItemsReader {
             return null;
         }
         
-        return listOfItems;
+        return items;
     }
 }

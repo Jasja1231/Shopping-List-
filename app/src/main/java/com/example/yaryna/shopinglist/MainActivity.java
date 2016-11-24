@@ -1,5 +1,7 @@
 package com.example.yaryna.shopinglist;
 
+import android.app.Dialog;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +11,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -19,9 +23,12 @@ public class MainActivity extends AppCompatActivity {
      * Name of the file where application stores the data for the text of the list
      */
     private final String DATA_FILE ="shoppingistData.txt";//"/data/data/com.example.yaryna.shopinglist/files/data.txt";
-    private ArrayList<String> listItemsText ;
+
+    private ArrayList<Item> items ;
+
+
     private ListView listView;
-    private ArrayAdapter<String> itemsAdapter;
+    private ItemAdapter itemListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,22 +38,22 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //Read values from the  file to display
-         listItemsText = ListItemsReader.readFile(DATA_FILE);
+        items = ListItemsReader.readFile(DATA_FILE);
+
         //Chek if list is empty
-         if(listItemsText == null || listItemsText.isEmpty()){
+         if(items == null || items.isEmpty()){
             // didn't read from file
-            listItemsText = new ArrayList<>();
+            items = new ArrayList<>();
             Snackbar.make(findViewById(R.id.content_main),"Your shopping list is empty.",4000).show();
         }
+
         //Add items to list view
-        // ADD HERE
         listView = (ListView) findViewById(R.id.listViewItems);
-        listItemsText = new ArrayList<String>();
-        itemsAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, listItemsText);
-        listView.setAdapter(itemsAdapter);
-        listItemsText.add("First Item");
-        listItemsText.add("Second Item");
+
+        itemListAdapter = new ItemAdapter(this,items);
+        listView.setAdapter(itemListAdapter);
+
+
 
         //Add floating button
        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -54,10 +61,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
               //add popup to add new item to the list
+                final AddItemDialog dialog = new AddItemDialog(MainActivity.this);
+                dialog.setContentView(R.layout.add_item_view);
+                dialog.setTitle("Add item");
+                dialog.setMainActivity(MainActivity.this);
+                dialog.show();
 
             }
         });
     }
+
 
 
 
@@ -81,5 +94,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addItem(Item it) {
+        if(it.ID == -1){
+            //new item
+            it.ID = this.items.size();
+            items.add(it);
+        }
+        else{
+            items.add(it.ID,it);
+        }
+
     }
 }
